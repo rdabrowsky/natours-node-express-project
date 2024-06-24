@@ -8,6 +8,6 @@ const {
 const router = express.Router();
 
 router.route('/').post(createTour).get(getAllTours);
-router.route('/:tourId').get(getTour);
+router.route('/:id').get(getTour);
 
 module.exports = router;

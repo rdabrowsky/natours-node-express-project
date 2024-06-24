@@ -13,13 +13,11 @@ const getAllTours = (req, res) => {
 };
 
 const getTour = (req, res) => {
-  const { tourId } = req.params;
-  const tour = tours.find((tour) => tour._id === tourId);
+  const { id } = req.params;
+  const tour = tours.find((tour) => tour._id === id);
 
   if (!tour) {
-    return res
-      .status(404)
-      .json({ message: `Tour not found with id: ${tourId}` });
+    return res.status(404).json({ message: `Tour not found with id: ${id}` });
   }
 
   res.status(200).json({
