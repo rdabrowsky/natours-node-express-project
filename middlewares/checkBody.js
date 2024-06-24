@@ -1,8 +1,5 @@
 const checkBody = (req, res, next) => {
   const { name, price } = req.body;
-  console.log(req);
-
-  console.log(name, price);
 
   if (!name || !price) {
     return res.status(400).json({
@@ -10,7 +7,6 @@ const checkBody = (req, res, next) => {
       message: 'Missing name and price property',
     });
   }
-
   next();
 };
 
