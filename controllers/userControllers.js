@@ -1,3 +1,6 @@
+const User = require('../models/userModel');
+const asyncHandler = require('../utils/asyncHandler');
+
 const getAllUsers = (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -30,12 +33,11 @@ const updateUser = (req, res) => {
   });
 };
 
-const createUser = (req, res) => {
-  res.status(200).json({
+const createUser = asyncHandler(async (req, res, next) => {
+  res.status(201).json({
     status: 'success',
-    results: '',
-    data: 'Create User',
+    data: 'user created',
   });
-};
+});
 
 module.exports = { getAllUsers, getUser, deleteUser, updateUser, createUser };
