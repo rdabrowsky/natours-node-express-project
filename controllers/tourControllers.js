@@ -1,5 +1,7 @@
 const APIFeatures = require('../utils/apiFeatures');
 const asyncHandler = require('../utils/asyncHandler');
+const AppError = require('../utils/appError');
+
 const Tour = require('../models/tourModel');
 
 const getAllTours = asyncHandler(async (req, res, next) => {
@@ -30,7 +32,17 @@ const aliasTopTours = (req, res, next) => {
   next();
 };
 
-const getTour = (req, res) => {};
+const getTour = asyncHandler(async (req, res, next) => {
+  const tour = await Tour.findById(req.params.id);
+
+  if (!tour) {
+    return next(
+      new AppError(`Tour with that id (${req.params.id}) not found`, 404),
+    );
+  }
+
+  res.status(200).json({ status: 'success', data: tour });
+});
 
 const createTour = asyncHandler(async (req, res, next) => {
   const tour = await Tour.create(req.body);
@@ -40,8 +52,25 @@ const createTour = asyncHandler(async (req, res, next) => {
     data: { tour },
   });
 });
-const deleteTour = (req, res) => {};
-const updateTour = (req, res) => {};
+
+const deleteTour = asyncHandler(async (req, res, next) => {
+  const tour = await Tour.findById(req.params.id);
+
+  if (!tour) {
+    return next(
+      new AppError(`Tour with that id (${req.params.id}) not found`, 404),
+    );
+  }
+});
+const updateTour = asyncHandler(async (req, res, next) => {
+  const tour = await Tour.findById(req.params.id);
+
+  if (!tour) {
+    return next(
+      new AppError(`Tour with that id (${req.params.id}) not found`, 404),
+    );
+  }
+});
 
 const getTourStats = asyncHandler(async (req, res, next) => {
   const stats = await Tour.aggregate([
