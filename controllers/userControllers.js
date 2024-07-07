@@ -1,4 +1,3 @@
-const User = require('../models/userModel');
 const asyncHandler = require('../utils/asyncHandler');
 
 const getAllUsers = (req, res) => {
