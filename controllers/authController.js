@@ -9,6 +9,15 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
+const getToken = (auth) => {
+  let token;
+  if (auth && auth.startsWith('Bearer')) {
+    token = auth.split(' ')[1];
+  }
+
+  return token;
+};
+
 const signUp = asyncHandler(async (req, res, next) => {
   const user = await User.create({
     name: req.body.name,
@@ -48,13 +57,8 @@ const signIn = asyncHandler(async (req, res, next) => {
 
 const protect = asyncHandler(async (req, res, next) => {
   // 1) Getting token and check if exist
-  let token;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    token = req.headers.authorization.split(' ')[1];
-  }
+  const { authorization } = req.headers;
+  const token = getToken(authorization);
 
   if (!token) {
     return next(new AppError(`You are not logged in.`, 401));
@@ -83,4 +87,40 @@ const protect = asyncHandler(async (req, res, next) => {
   next();
 });
 
-module.exports = { signUp, signIn, protect };
+const restrictTo = (...roles) =>
+  asyncHandler(async (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError("You don't have permission to perform this action", 403),
+      );
+    }
+
+    next();
+  });
+
+const forgotPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new AppError('There is no user with that email address', 404));
+  }
+
+  const resetToken = user.createPasswordResetToken();
+
+  await user.save({ validateBeforeSave: false });
+
+  next();
+});
+
+const resetPassword = asyncHandler(async (req, res, next) => {
+  next();
+});
+
+module.exports = {
+  signUp,
+  signIn,
+  protect,
+  restrictTo,
+  forgotPassword,
+  resetPassword,
+};

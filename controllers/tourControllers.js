@@ -15,7 +15,6 @@ const getAllTours = asyncHandler(async (req, res, next) => {
   res.status(201).json({
     status: 'success',
     results: tours.length,
-
     data: { tours },
   });
 });
@@ -61,7 +60,15 @@ const deleteTour = asyncHandler(async (req, res, next) => {
       new AppError(`Tour with that id (${req.params.id}) not found`, 404),
     );
   }
+
+  await Tour.deleteOne({ _id: req.params.id });
+
+  res.status(203).json({
+    status: 'success',
+    message: `Tour with id (${req.params.id}) deleted successfully.`,
+  });
 });
+
 const updateTour = asyncHandler(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id);
 

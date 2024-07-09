@@ -15,6 +15,8 @@ const DATABASE_URL = process.env.MONGO_URI.replace(
   '<PASSWORD>',
   process.env.DATABASE_PASSWORD,
 );
+
+console.log(DATABASE_URL);
 mongoose
   .connect(DATABASE_URL, {
     useNewUrlParser: true,

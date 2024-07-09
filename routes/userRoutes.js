@@ -5,12 +5,20 @@ const {
   deleteUser,
   updateUser,
 } = require('../controllers/userControllers');
-const { signUp, signIn } = require('../controllers/authController');
+const {
+  signUp,
+  signIn,
+  forgotPassword,
+  resetPassword,
+} = require('../controllers/authController');
 
 const router = express.Router();
 
 router.post('/signup', signUp);
 router.post('/login', signIn);
+
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
 
 router.route('/').get(getAllUsers);
 router.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
