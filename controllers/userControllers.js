@@ -1,10 +1,25 @@
 const asyncHandler = require('../utils/asyncHandler');
+const User = require('../models/userModel');
+const AppError = require('../utils/appError');
 
-const getAllUsers = (req, res) => {
+const filterObj = (object, ...allowedFields) => {
+  const newObj = {};
+
+  Object.keys(object).forEach((el) => {
+    if (allowedFields.includes(el)) {
+      newObj[el] = object[el];
+    }
+  });
+
+  return newObj;
+};
+const getAllUsers = async (req, res) => {
+  const users = await User.find({});
+
   res.status(200).json({
     status: 'success',
-    results: '',
-    data: 'users',
+    results: users.length,
+    data: users,
   });
 };
 
@@ -32,6 +47,31 @@ const updateUser = (req, res) => {
   });
 };
 
+const updateProfile = asyncHandler(async (req, res, next) => {
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(new AppError('This route is not for password updates', 400));
+  }
+
+  const filteredBody = filterObj(req.body, 'name', 'email');
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: updatedUser,
+    },
+  });
+});
+
+const deleteProfile = asyncHandler(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(req.user.id, { active: false });
+
+  res.status(204).json({ status: 'success', data: null });
+});
+
 const createUser = asyncHandler(async (req, res, next) => {
   res.status(201).json({
     status: 'success',
@@ -39,4 +79,12 @@ const createUser = asyncHandler(async (req, res, next) => {
   });
 });
 
-module.exports = { getAllUsers, getUser, deleteUser, updateUser, createUser };
+module.exports = {
+  getAllUsers,
+  getUser,
+  deleteUser,
+  updateUser,
+  createUser,
+  updateProfile,
+  deleteProfile,
+};

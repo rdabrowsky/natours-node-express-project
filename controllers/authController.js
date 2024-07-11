@@ -20,6 +20,16 @@ const getToken = (auth) => {
   return token;
 };
 
+const createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+
+  res.status(statusCode).json({
+    status: 'success',
+    token,
+    data: { user },
+  });
+};
+
 const signUp = asyncHandler(async (req, res, next) => {
   const user = await User.create({
     name: req.body.name,
@@ -28,13 +38,7 @@ const signUp = asyncHandler(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
   });
 
-  const token = signToken(user._id);
-
-  res.status(201).json({
-    status: 'success',
-    token,
-    data: { user },
-  });
+  createSendToken(user, 201, res);
 });
 
 const signIn = asyncHandler(async (req, res, next) => {
@@ -49,12 +53,7 @@ const signIn = asyncHandler(async (req, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError(`Email or password is incorrect.`, 401));
   }
-  const token = signToken(user._id);
-
-  res.status(201).json({
-    status: 'success',
-    token,
-  });
+  createSendToken(user, 201, res);
 });
 
 const protect = asyncHandler(async (req, res, next) => {
@@ -152,7 +151,6 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   if (!user) return next(new AppError('Token is invalid or has expired', 400));
 
   // 2) If token has not expired and there is the user set new password
-
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
@@ -162,12 +160,36 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   await user.save();
 
   // 4) Login password
-  const token = signToken(user._id);
+  createSendToken(user, 200, res);
+});
 
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+const updatePassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select('+password');
+
+  if (!user) {
+    return next(
+      new AppError(
+        `The user belonging to this token does no longer exits.`,
+        401,
+      ),
+    );
+  }
+
+  const { currentPassword, newPassword, passwordConfirm } = req.body;
+
+  if (
+    !currentPassword ||
+    !(await user.correctPassword(currentPassword, user.password))
+  ) {
+    return next(new AppError(`Your current password is wrong!`, 401));
+  }
+
+  user.password = newPassword;
+  user.passwordConfirm = passwordConfirm;
+
+  await user.save();
+
+  createSendToken(user, 201, res);
 });
 
 module.exports = {
@@ -177,4 +199,5 @@ module.exports = {
   restrictTo,
   forgotPassword,
   resetPassword,
+  updatePassword,
 };
