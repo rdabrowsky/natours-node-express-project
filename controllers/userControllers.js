@@ -15,16 +15,7 @@ const filterObj = (object, ...allowedFields) => {
   return newObj;
 };
 
-const getAllUsers = getAll(User);
-
-const getUser = getOne(User);
-
-const deleteUser = deleteOne(User);
-
-// Don't update password with this
-const updateUser = updateOne(User);
-
-const updateProfile = asyncHandler(async (req, res, next) => {
+const updateMe = asyncHandler(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError('This route is not for password updates', 400));
   }
@@ -43,8 +34,8 @@ const updateProfile = asyncHandler(async (req, res, next) => {
   });
 });
 
-const deleteProfile = asyncHandler(async (req, res, next) => {
-  const user = await User.findByIdAndUpdate(req.user.id, { active: false });
+const deleteMe = asyncHandler(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
 
   res.status(204).json({ status: 'success', data: null });
 });
@@ -56,12 +47,28 @@ const createUser = asyncHandler(async (req, res, next) => {
   });
 });
 
+const getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+
+  next();
+};
+
+const getAllUsers = getAll(User);
+
+const getUser = getOne(User);
+
+const deleteUser = deleteOne(User);
+
+// Don't update password with this
+const updateUser = updateOne(User);
+
 module.exports = {
   getAllUsers,
   getUser,
   deleteUser,
   updateUser,
   createUser,
-  updateProfile,
-  deleteProfile,
+  updateMe,
+  deleteMe,
+  getMe,
 };
