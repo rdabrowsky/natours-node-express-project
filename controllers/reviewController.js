@@ -1,5 +1,6 @@
 const asyncHandler = require('../utils/asyncHandler');
 const Review = require('../models/reviewModel');
+const { deleteOne } = require('./handlerFactory');
 
 const createReview = asyncHandler(async (req, res, next) => {
   // Allow nested routes
@@ -30,7 +31,10 @@ const getAllReviews = asyncHandler(async (req, res, next) => {
   });
 });
 
+const deleteReview = deleteOne(Review);
+
 module.exports = {
   getAllReviews,
   createReview,
+  deleteReview,
 };

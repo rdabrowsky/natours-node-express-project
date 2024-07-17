@@ -1,7 +1,7 @@
 const APIFeatures = require('../utils/apiFeatures');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/appError');
-
+const { deleteOne } = require('./handlerFactory');
 const Tour = require('../models/tourModel');
 
 const getAllTours = asyncHandler(async (req, res, next) => {
@@ -52,22 +52,25 @@ const createTour = asyncHandler(async (req, res, next) => {
   });
 });
 
-const deleteTour = asyncHandler(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id);
+// const deleteTour = asyncHandler(async (req, res, next) => {
+//   const tour = await Tour.findById(req.params.id);
+//
+//   if (!tour) {
+//     return next(
+//       new AppError(`Tour with that id (${req.params.id}) not found`, 404),
+//     );
+//   }
+//
+//   await Tour.deleteOne({ _id: req.params.id });
+//
+//   res.status(203).json({
+//     status: 'success',
+//     message: `Tour with id (${req.params.id}) deleted successfully.`,
+//     data: null,
+//   });
+// });
 
-  if (!tour) {
-    return next(
-      new AppError(`Tour with that id (${req.params.id}) not found`, 404),
-    );
-  }
-
-  await Tour.deleteOne({ _id: req.params.id });
-
-  res.status(203).json({
-    status: 'success',
-    message: `Tour with id (${req.params.id}) deleted successfully.`,
-  });
-});
+const deleteTour = deleteOne(Tour);
 
 const updateTour = asyncHandler(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id);
