@@ -19,7 +19,9 @@ const createReview = asyncHandler(async (req, res, next) => {
 });
 
 const getAllReviews = asyncHandler(async (req, res, next) => {
-  const reviews = await Review.find();
+  let filter = {};
+  if (req.params.id) filter = { tour: req.params.id };
+  const reviews = await Review.find(filter);
 
   res.status(200).json({
     status: 'success',
