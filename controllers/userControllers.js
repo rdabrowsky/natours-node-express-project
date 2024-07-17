@@ -1,6 +1,7 @@
 const asyncHandler = require('../utils/asyncHandler');
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
+const { deleteOne, updateOne, getOne, getAll } = require('./handlerFactory');
 
 const filterObj = (object, ...allowedFields) => {
   const newObj = {};
@@ -13,39 +14,15 @@ const filterObj = (object, ...allowedFields) => {
 
   return newObj;
 };
-const getAllUsers = async (req, res) => {
-  const users = await User.find({});
 
-  res.status(200).json({
-    status: 'success',
-    results: users.length,
-    data: users,
-  });
-};
+const getAllUsers = getAll(User);
 
-const getUser = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    results: '',
-    data: 'user with id',
-  });
-};
+const getUser = getOne(User);
 
-const deleteUser = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    results: '',
-    data: 'deleteUser',
-  });
-};
+const deleteUser = deleteOne(User);
 
-const updateUser = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    results: '',
-    data: 'updateUser',
-  });
-};
+// Don't update password with this
+const updateUser = updateOne(User);
 
 const updateProfile = asyncHandler(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {

@@ -4,6 +4,9 @@ const {
   createReview,
   getAllReviews,
   deleteReview,
+  updateReview,
+  getReview,
+  setTourUserIds,
 } = require('../controllers/reviewController');
 
 const router = express.Router({
@@ -13,8 +16,12 @@ const router = express.Router({
 router
   .route('/')
   .get(getAllReviews)
-  .post(protect, restrictTo('user'), createReview);
+  .post(protect, restrictTo('user'), setTourUserIds, createReview);
 
-router.route('/:id').delete(protect, restrictTo('user admin'), deleteReview);
+router
+  .route('/:id')
+  .get(getReview)
+  .delete(protect, restrictTo('user admin'), deleteReview)
+  .patch(protect, updateReview);
 
 module.exports = router;
