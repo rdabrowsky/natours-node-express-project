@@ -11,6 +11,7 @@ const getOverview = asyncHandler(async (req, res, next) => {
     tours,
   });
 });
+
 const getTour = asyncHandler(async (req, res, next) => {
   const tour = await Tour.findOne({ slug: req.params.slug }).populate({
     path: 'reviews',
@@ -18,6 +19,7 @@ const getTour = asyncHandler(async (req, res, next) => {
   });
 
   res.status(200).render('tour', {
+    title: `${tour.name} tour`,
     tour,
   });
 });
