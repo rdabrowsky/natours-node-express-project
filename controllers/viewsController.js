@@ -11,10 +11,15 @@ const getOverview = asyncHandler(async (req, res, next) => {
     tours,
   });
 });
-const getTour = (req, res) => {
-  res.status(200).render('overview', {
-    title: 'All Tours',
+const getTour = asyncHandler(async (req, res, next) => {
+  const tour = await Tour.findOne({ slug: req.params.slug }).populate({
+    path: 'reviews',
+    fields: 'review rating user',
   });
-};
+
+  res.status(200).render('tour', {
+    tour,
+  });
+});
 
 module.exports = { getTour, getOverview };
