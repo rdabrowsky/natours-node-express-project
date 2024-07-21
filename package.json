@@ -8,12 +8,16 @@
     "data:import": "node ./dev-data/data/import-dev-data.js --import",
     "data:delete": "node ./dev-data/data/import-dev-data.js --delete",
     "debug:dev": "ndb server.js",
-    "debug:prod": "NODE_ENV=production ndb server.js"
+    "debug:prod": "NODE_ENV=production ndb server.js",
+    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
+    "build:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "dotenv": "^7.0.0",
@@ -42,6 +46,7 @@
     "eslint-plugin-react": "^7.34.3",
     "ndb": "^1.1.5",
     "nodemon": "^3.1.4",
+    "parcel-bundler": "^1.12.5",
     "prettier": "^3.3.2"
   },
   "engines": {

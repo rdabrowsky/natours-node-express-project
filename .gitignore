@@ -2,3 +2,5 @@
 .idea
 config.env
 package-lock.json
+
+.cache
