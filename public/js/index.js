@@ -2,12 +2,16 @@
 import '@babel/polyfill';
 import { login, logout } from './auth';
 import { displayMap } from './mapbox';
-import { updateData } from './updateSettings';
+import { updateSettings } from './updateSettings';
+import { showAlert } from './alerts';
 
 const mapbox = document.getElementById('map');
 const loginForm = document.querySelector('.login-form form.form');
 const logoutButton = document.querySelector('a.nav__el.nav__el--logout');
 const updateProfileForm = document.querySelector('form.form.form-user-data');
+const changePasswordForm = document.querySelector(
+  'form.form.form-user-password',
+);
 
 if (mapbox) {
   const locations = JSON.parse(mapbox.dataset.locations);
@@ -35,6 +39,30 @@ if (updateProfileForm) {
     const email = e.target.querySelector('input#email').value;
     const name = e.target.querySelector('input#name').value;
 
-    await updateData(name, email);
+    await updateSettings({ name, email });
+  });
+}
+
+if (changePasswordForm) {
+  changePasswordForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const currentPassword = e.target.querySelector(
+      'input#password-current',
+    ).value;
+    const newPassword = e.target.querySelector('input#password').value;
+    const passwordConfirm = e.target.querySelector(
+      'input#password-confirm',
+    ).value;
+
+    if (newPassword !== passwordConfirm) {
+      showAlert('error', 'New password must be same as confirm password');
+    }
+    await updateSettings(
+      { currentPassword, newPassword, passwordConfirm },
+      'password',
+    );
+
+    e.target.reset();
   });
 }
