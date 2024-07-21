@@ -1,5 +1,6 @@
 const Tour = require('../models/tourModel');
 const asyncHandler = require('../utils/asyncHandler');
+const AppError = require('../utils/appError');
 
 const getOverview = asyncHandler(async (req, res, next) => {
   // 1) Get tour data
@@ -17,6 +18,10 @@ const getTour = asyncHandler(async (req, res, next) => {
     path: 'reviews',
     fields: 'review rating user',
   });
+
+  if (!tour) {
+    return next(new AppError('There is no tour with that name', 404));
+  }
 
   res.status(200).render('tour', {
     title: `${tour.name} tour`,
