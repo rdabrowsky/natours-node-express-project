@@ -6,6 +6,8 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cookieParser = require('cookie-parser');
+
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const tourRoutes = require('./routes/tourRoutes');
@@ -16,7 +18,6 @@ const viewRoutes = require('./routes/viewRoutes');
 const app = express();
 
 app.set('view engine', 'pug');
-
 app.set('views', path.join(__dirname, 'views'));
 
 // Serving static files
@@ -46,6 +47,8 @@ app.use(
     limit: '10kb',
   }),
 );
+
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 
 // Data sanitization against noSQL query injection

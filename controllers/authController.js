@@ -12,15 +12,6 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-const getToken = (auth) => {
-  let token;
-  if (auth && auth.startsWith('Bearer')) {
-    token = auth.split(' ')[1];
-  }
-
-  return token;
-};
-
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
   const cookieOptions = {
@@ -71,8 +62,13 @@ const signIn = asyncHandler(async (req, res, next) => {
 
 const protect = asyncHandler(async (req, res, next) => {
   // 1) Getting token and check if exist
-  const { authorization } = req.headers;
-  const token = getToken(authorization);
+  let token;
+
+  if (req.body.authorization && req.body.authorization.startsWith('Bearer')) {
+    token = req.body.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
 
   if (!token) {
     return next(new AppError(`You are not logged in.`, 401));
@@ -98,6 +94,32 @@ const protect = asyncHandler(async (req, res, next) => {
     );
 
   req.user = user;
+  next();
+});
+
+const isLoggedIn = asyncHandler(async (req, res, next) => {
+  // 1) Validate token
+
+  if (req.cookies.jwt) {
+    const decoded = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECRET,
+    );
+
+    const user = await User.findById(decoded.id);
+
+    // 2) Check if user still exists
+    if (!user) {
+      return next();
+    }
+
+    // 3) Check if user changed password after the token was issued
+    if (user.changedPasswordAfter(decoded.iat)) return next();
+
+    res.locals.user = user;
+    return next();
+  }
+
   next();
 });
 
@@ -213,4 +235,5 @@ module.exports = {
   forgotPassword,
   resetPassword,
   updatePassword,
+  isLoggedIn,
 };
