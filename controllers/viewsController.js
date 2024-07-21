@@ -34,5 +34,11 @@ const getLoginForm = (req, res) => {
     title: 'Sign in',
   });
 };
+const getAccount = (req, res) => {
+  res.status(200).render('account', {
+    title: 'Your account',
+    user: req.user,
+  });
+};
 
-module.exports = { getTour, getOverview, getLoginForm };
+module.exports = { getTour, getOverview, getLoginForm, getAccount };
