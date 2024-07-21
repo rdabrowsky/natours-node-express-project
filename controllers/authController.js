@@ -60,6 +60,18 @@ const signIn = asyncHandler(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+const logout = (req, res) => {
+  res.cookie('jwt', '', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Logged out',
+  });
+};
+
 const protect = asyncHandler(async (req, res, next) => {
   // 1) Getting token and check if exist
   let token;
@@ -236,4 +248,5 @@ module.exports = {
   resetPassword,
   updatePassword,
   isLoggedIn,
+  logout,
 };
