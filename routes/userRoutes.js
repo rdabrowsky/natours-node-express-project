@@ -1,4 +1,5 @@
 const express = require('express');
+
 const {
   getAllUsers,
   getUser,
@@ -7,6 +8,7 @@ const {
   updateMe,
   deleteMe,
   getMe,
+  uploadUserPhoto,
 } = require('../controllers/userControllers');
 const {
   signUp,
@@ -32,7 +34,7 @@ router.use(protect);
 
 router.patch('/update-password', updatePassword);
 router.get('/me', getMe, getUser);
-router.patch('/update-me', updateMe);
+router.patch('/update-me', uploadUserPhoto, updateMe);
 router.delete('/delete-me', deleteMe);
 
 // Restrict all routes after this middleware
