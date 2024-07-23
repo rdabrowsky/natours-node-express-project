@@ -9,6 +9,7 @@ const {
   deleteMe,
   getMe,
   uploadUserPhoto,
+  resizeUserPhoto,
 } = require('../controllers/userControllers');
 const {
   signUp,
@@ -34,7 +35,7 @@ router.use(protect);
 
 router.patch('/update-password', updatePassword);
 router.get('/me', getMe, getUser);
-router.patch('/update-me', uploadUserPhoto, updateMe);
+router.patch('/update-me', resizeUserPhoto, uploadUserPhoto, updateMe);
 router.delete('/delete-me', deleteMe);
 
 // Restrict all routes after this middleware

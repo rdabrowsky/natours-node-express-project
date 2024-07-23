@@ -1,5 +1,6 @@
 const multer = require('multer');
-const req = require('express/lib/request');
+const sharp = require('sharp');
+const path = require('node:path');
 const asyncHandler = require('../utils/asyncHandler');
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
@@ -17,23 +18,37 @@ const filterObj = (object, ...allowedFields) => {
   return newObj;
 };
 
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/img/users');
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split('/')[1];
-
-    cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
-  },
-});
-
+// const multerStorage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'public/img/users');
+//   },
+//   filename: (req, file, cb) => {
+//     const ext = file.mimetype.split('/')[1];
+//
+//     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
+//   },
+// });
+const multerStorage = multer.memoryStorage();
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.split('/')[0] === 'image') {
     return cb(null, true);
   }
 
   cb(new AppError('Not an image. Please upload only umages', 400), false);
+};
+
+const resizeUserPhoto = (req, file, next) => {
+  if (!req.file) return next();
+
+  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+
+  sharp(req.file.buffer)
+    .resize(500, 500, { fit: 'contain', position: 'center' })
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/users/${req.file.filename}`);
+
+  next();
 };
 
 const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
@@ -100,4 +115,5 @@ module.exports = {
   deleteMe,
   getMe,
   uploadUserPhoto,
+  resizeUserPhoto,
 };
