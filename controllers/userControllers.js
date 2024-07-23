@@ -1,6 +1,6 @@
 const multer = require('multer');
 const sharp = require('sharp');
-const path = require('node:path');
+
 const asyncHandler = require('../utils/asyncHandler');
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
@@ -38,6 +38,11 @@ const multerFilter = (req, file, cb) => {
   }
 };
 
+const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
+
+// upload.singe('image')
+// upload.array('images', 5)
+
 const resizeUserPhoto = asyncHandler(async (req, res, next) => {
   if (!req.file) return next();
 
@@ -51,8 +56,6 @@ const resizeUserPhoto = asyncHandler(async (req, res, next) => {
 
   next();
 });
-
-const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 
 const uploadUserPhoto = upload.single('photo');
 
