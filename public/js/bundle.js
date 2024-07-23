@@ -6138,9 +6138,8 @@ var runtime = (function (exports) {
           throw arg;
         }
 
-        // Be forgiving, per GeneratorResume behavior specified since ES2015:
-        // ES2015 spec, step 3: https://262.ecma-international.org/6.0/#sec-generatorresume
-        // Latest spec, step 2: https://tc39.es/ecma262/#sec-generatorresume
+        // Be forgiving, per 25.3.3.3.3 of the spec:
+        // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
         return doneResult();
       }
 
@@ -6213,7 +6212,7 @@ var runtime = (function (exports) {
     var method = delegate.iterator[methodName];
     if (method === undefined) {
       // A .throw or .return when the delegate iterator has no .throw
-      // method, or a missing .next method, always terminate the
+      // method, or a missing .next mehtod, always terminate the
       // yield* loop.
       context.delegate = null;
 
@@ -6367,7 +6366,7 @@ var runtime = (function (exports) {
   };
 
   function values(iterable) {
-    if (iterable != null) {
+    if (iterable) {
       var iteratorMethod = iterable[iteratorSymbol];
       if (iteratorMethod) {
         return iteratorMethod.call(iterable);
@@ -6397,7 +6396,8 @@ var runtime = (function (exports) {
       }
     }
 
-    throw new TypeError(typeof iterable + " is not iterable");
+    // Return an iterator with no values.
+    return { next: doneResult };
   }
   exports.values = values;
 
@@ -12722,19 +12722,18 @@ if (logoutButton) {
 if (updateProfileForm) {
   updateProfileForm.addEventListener('submit', /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
-      var email, name;
+      var form;
       return _regeneratorRuntime().wrap(function _callee2$(_context2) {
         while (1) switch (_context2.prev = _context2.next) {
           case 0:
             e.preventDefault();
-            email = e.target.querySelector('input#email').value;
-            name = e.target.querySelector('input#name').value;
-            _context2.next = 5;
-            return (0, _updateSettings.updateSettings)({
-              name: name,
-              email: email
-            });
-          case 5:
+            form = new FormData();
+            form.append('email', e.target.querySelector('input#email').value);
+            form.append('name', e.target.querySelector('input#name').value);
+            form.append('photo', e.target.querySelector('input#photo').files[0]);
+            _context2.next = 7;
+            return (0, _updateSettings.updateSettings)(form);
+          case 7:
           case "end":
             return _context2.stop();
         }
@@ -12803,7 +12802,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50326" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53171" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

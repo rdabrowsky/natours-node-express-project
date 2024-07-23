@@ -36,10 +36,13 @@ if (updateProfileForm) {
   updateProfileForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const email = e.target.querySelector('input#email').value;
-    const name = e.target.querySelector('input#name').value;
+    const form = new FormData();
 
-    await updateSettings({ name, email });
+    form.append('email', e.target.querySelector('input#email').value);
+    form.append('name', e.target.querySelector('input#name').value);
+    form.append('photo', e.target.querySelector('input#photo').files[0]);
+
+    await updateSettings(form);
   });
 }
 
