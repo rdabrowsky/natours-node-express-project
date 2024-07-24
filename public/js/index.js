@@ -4,6 +4,7 @@ import { login, logout } from './auth';
 import { displayMap } from './mapbox';
 import { updateSettings } from './updateSettings';
 import { showAlert } from './alerts';
+import { bookTour } from './stripe';
 
 const mapbox = document.getElementById('map');
 const loginForm = document.querySelector('.login-form form.form');
@@ -12,6 +13,7 @@ const updateProfileForm = document.querySelector('form.form.form-user-data');
 const changePasswordForm = document.querySelector(
   'form.form.form-user-password',
 );
+const bookTourButton = document.querySelector('button#book-tour');
 
 if (mapbox) {
   const locations = JSON.parse(mapbox.dataset.locations);
@@ -67,5 +69,14 @@ if (changePasswordForm) {
     );
 
     e.target.reset();
+  });
+}
+
+if (bookTourButton) {
+  bookTourButton.addEventListener('click', async ({ target }) => {
+    target.textContent = `Processing...`;
+    const { tourId } = target.dataset;
+
+    await bookTour(tourId);
   });
 }
