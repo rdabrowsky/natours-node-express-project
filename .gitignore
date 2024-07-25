@@ -1,6 +1,6 @@
 /node_modules
 .idea
-config.env
+*.env
 package-lock.json
 
 .cache
