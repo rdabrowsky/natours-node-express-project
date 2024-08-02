@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start:dev": "nodemon server.js",
-    "start:prod": "NODE_ENV=production nodemon server.js",
+    "start:dev": "nodemon ./backend/server.js",
+    "start:prod": "NODE_ENV=production nodemon ./backend/server.js",
     "data:import": "node ./dev-data/data/import-dev-data.js --import",
     "data:delete": "node ./dev-data/data/import-dev-data.js --delete",
-    "debug:dev": "ndb server.js",
-    "debug:prod": "NODE_ENV=production ndb server.js",
-    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
-    "build:js": "parcel build ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
+    "debug:dev": "ndb ./backend/server.js",
+    "debug:prod": "NODE_ENV=production ndb ./backend/server.js",
+    "watch:js": "parcel watch ../backend/public/js/index.js --out-dir ../backend/public/js --out-file bundle.js",
+    "build:js": "parcel build ../backend/public/js/index.js --out-dir ../backend/public/js --out-file bundle.js"
   },
   "author": "",
   "license": "ISC",
